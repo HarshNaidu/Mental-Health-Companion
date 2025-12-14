@@ -5,24 +5,37 @@
   <link rel="stylesheet" href = "{{url_for('static',filename='css/style.css')}}">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function() {
-      $('#chatForm').on('submit', function(event) {
-        event.preventDefault();
-        var userMessage = $('#userMessage').val();
-        $('#userMessage').val('');
-        $.ajax({
-          url: "{{ url_for('chat') }}",
-          method: 'POST',
-          data: JSON.stringify({message: userMessage}),
-          contentType: 'application/json',
-          success: function(response) {
-            $('#chatBox').append('<p class="user-message"><strong>You: </strong> ' + userMessage + '</p>');
-            $('#chatBox').append('<p class="bot-message"><strong>AIMWM🐼: </strong> ' + response.bot_message + '</p>');
-          }
-        });
-      });
+$(document).ready(function () {
+  $('#chatForm').on('submit', function (event) {
+    event.preventDefault();
+
+    let userMessage = $('#userMessage').val().trim();
+    if (!userMessage) return;
+
+    $('#userMessage').val('');
+
+    $('#chatBox').append(
+      '<div class="user-message"><strong>You:</strong> ' + userMessage + '</div>'
+    );
+
+    $.ajax({
+      url: "{{ url_for('chat') }}",
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ message: userMessage }),
+      success: function (response) {
+        $('#chatBox').append(
+          '<div class="bot-message"><strong>AIMWM 🐼:</strong> ' +
+            response.bot_message +
+            '</div>'
+        );
+        $('#chatBox').scrollTop($('#chatBox')[0].scrollHeight);
+      }
     });
-  </script>
+  });
+});
+</script>
+
 </head>
 <body background="{{ url_for('static', filename='back.jpg') }}">
     <div class="header">
