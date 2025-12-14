@@ -1,0 +1,6 @@
+flask
+opencv-python
+numpy
+tensorflow==2.15.0
+keras
+openai
