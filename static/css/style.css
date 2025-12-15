@@ -1,188 +1,194 @@
-/* ================= RESET ================= */
+/* ---------- GLOBAL RESET ---------- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* ================= BODY ================= */
 body {
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: url('back.jpg') no-repeat center center fixed;
-  background-size: cover;
+  background-color: #f2f4f7;
   color: #111;
 }
 
-/* ================= HEADER ================= */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
-
+/* ---------- HEADER ---------- */
 .header {
-  width: 100%;
-  font-family: 'Roboto', Arial, sans-serif;
-  color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+  padding: 18px 32px;
+  background: #1f2937;
+  color: #fff;
 }
 
-.header .logos-container,
-.header .user-container {
+.logos-container,
+.user-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
 }
 
 .header h1 {
-  font-size: 32px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
-/* ================= LOGOS ================= */
-.logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* ================= CONTENT ================= */
+/* ---------- MAIN LAYOUT ---------- */
 .content {
-  display: flex;
-  width: 95%;
-  max-width: 1400px;
-  margin: 20px auto;
-  gap: 20px;
-  flex-grow: 1;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 24px;
+  padding: 24px;
+  height: calc(100vh - 90px);
 }
 
-/* ================= LEFT (CHAT) ================= */
+/* ---------- LEFT: CHAT ---------- */
 .left-section {
-  width: 70%;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
-/* ================= CHAT BOX ================= */
+/* CHAT BOX */
 #chatBox {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  height: 500px;
-  padding: 15px;
+  flex: 1;
   overflow-y: auto;
-  background-color: rgba(40, 40, 40, 0.85);
+  background: #e5e7eb;
+  padding: 18px;
   border-radius: 12px;
-  margin-bottom: 15px;
 }
 
-/* ================= CHAT BUBBLES ================= */
-.user-message {
-  align-self: flex-end;
-  background-color: #ffe5f8;
-  color: #000;
-  padding: 12px 14px;
-  border-radius: 16px 16px 0 16px;
-  max-width: 70%;
-  text-align: right;
-  animation: fadeIn 0.25s ease-in;
+/* SCROLLBAR */
+#chatBox::-webkit-scrollbar {
+  width: 6px;
+}
+#chatBox::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 10px;
 }
 
-.bot-message {
-  align-self: flex-start;
-  background-color: #e5ffca;
-  color: #000;
-  padding: 12px 14px;
-  border-radius: 16px 16px 16px 0;
-  max-width: 70%;
+/* CHAT BUBBLES */
+.bubble {
+  max-width: 68%;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+  font-size: 15px;
+  border-radius: 18px;
+  word-wrap: break-word;
+}
+
+/* USER (RIGHT) */
+.user {
+  margin-left: auto;
+  background: #2563eb;
+  color: white;
+  border-bottom-right-radius: 6px;
   text-align: left;
-  animation: fadeIn 0.25s ease-in;
 }
 
-/* ================= CHAT INPUT ================= */
+/* BOT (LEFT) */
+.bot {
+  margin-right: auto;
+  background: #d1fae5;
+  color: #065f46;
+  border-bottom-left-radius: 6px;
+}
+
+/* ---------- CONTROLS ---------- */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.controls button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background: #1e40af;
+}
+
+.controls label {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- INPUT BAR ---------- */
 #chatForm {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 #userMessage {
   flex: 1;
   padding: 12px;
-  font-size: 16px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #cbd5e1;
+  font-size: 15px;
 }
 
-#userMessage:focus {
-  outline: none;
-  background-color: #eaeaea;
-}
-
-button[type="submit"] {
-  padding: 12px 22px;
-  background-color: #ff3838;
-  color: #fff;
+#chatForm button {
+  padding: 12px 18px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
 }
 
-button[type="submit"]:hover {
-  background-color: #fe5858;
+#chatForm button:hover {
+  background: #1e40af;
 }
 
-/* ================= RIGHT (VIDEO) ================= */
+/* ---------- RIGHT: CAMERA + SONGS ---------- */
 .right-section {
-  width: 30%;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
-.video-container img {
+/* CAMERA */
+.video {
   width: 100%;
-  max-width: 400px;
-  border-radius: 10px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
-.info-box h2 {
-  margin: 15px 0 10px;
+/* SONG CARD */
+.songs {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.info-box h3,
-.info-box h4 {
-  margin: 6px 0;
+.songs h3 {
+  margin-bottom: 10px;
+  font-size: 17px;
 }
 
-/* ================= FOOTER ================= */
-footer {
-  text-align: center;
-  padding: 10px;
-  color: #fff;
+.songs ul {
+  padding-left: 18px;
 }
 
-/* ================= ANIMATION ================= */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
-  .content {
-    flex-direction: column;
-  }
-
-  .left-section,
-  .right-section {
-    width: 100%;
-  }
+.songs li {
+  margin-bottom: 6px;
+  font-size: 14px;
 }

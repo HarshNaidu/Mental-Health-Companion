@@ -1,123 +1,210 @@
-from flask import Flask, render_template, Response, request, jsonify
 import cv2
 import numpy as np
-import time
-import re
-from keras.models import load_model
+import tensorflow as tf
+from flask import Flask, render_template, Response, request, jsonify
 from openai import OpenAI
+client = OpenAI()  # reads OPENAI_API_KEY from env
+import joblib
 
-# ------------------ APP SETUP ------------------
-app = Flask(__name__, static_url_path='/static')
-client = OpenAI()
+# ---------------- CONFIG ----------------
+OpenAI.api_key = "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"
+spotify_kmeans = joblib.load("models/Spotify/spotify_kmeans.pkl")
+spotify_scaler = joblib.load("models/Spotify/spotify_scaler.pkl")
+app = Flask(__name__)
 
-# ------------------ CAMERA ------------------
-cam = cv2.VideoCapture(0)
+# ---------------- LOAD MODELS ----------------
+emotion_model = tf.keras.models.load_model("models/mobile_net_v2_firstmodel.h5")
+emotion_labels = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Neutral", "Neutral"]
 
-# ------------------ MODELS ------------------
-face_detector = cv2.CascadeClassifier(
-    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+face_cascade = cv2.CascadeClassifier(
+    cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 )
-emotion_model = load_model('mobile_net_v2_firstmodel.h5')
 
-emotion_labels = ["Angry", "Disgust", "Fear", "Happy", "Surprise", "Sad", "Neutral"]
-max_emotion = "Neutral"
+# Spotify
+spotify_kmeans = joblib.load("models/Spotify/spotify_kmeans.pkl")
+spotify_scaler = joblib.load("models/Spotify/spotify_scaler.pkl")
 
-# ------------------ EMOTION PREDICTION ------------------
-def predict_emotion(face_image):
-    face_image = cv2.imdecode(np.frombuffer(face_image, np.uint8), cv2.IMREAD_COLOR)
-    face_image = cv2.resize(face_image, (224, 224))
-    face_image = np.expand_dims(face_image, axis=0) / 255.0
+# Therapy
+therapy_vectorizer = joblib.load("models/Therapy/therapy_vectorizer.pkl")
+therapy_tfidf = joblib.load("models/Therapy/therapy_tfidf.pkl")
+therapy_texts = joblib.load("models/Therapy/therapy_texts.pkl")
 
-    preds = emotion_model.predict(face_image, verbose=0)
-    return emotion_labels[np.argmax(preds)]
+cap = cv2.VideoCapture(0)
+current_emotion = "Neutral"
+current_confidence = 0.0
 
-# ------------------ VIDEO STREAM ------------------
-def detection():
-    global max_emotion
-    face_images = []
-    capture_interval = 1
-    last_capture = time.time()
+# ---------------- CAMERA STREAM ----------------
+def gen_frames():
+    global current_emotion, current_confidence
 
     while True:
-        ret, frame = cam.read()
-        if not ret:
+        success, frame = cap.read()
+        if not success:
             break
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_detector.detectMultiScale(gray, 1.1, 4)
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
-        if len(faces) > 0:
-            x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
-            roi = frame[y:y+h, x:x+w]
+        for (x, y, w, h) in faces:
+            face = frame[y:y+h, x:x+w]
+            face = cv2.resize(face, (224, 224))
+            face = face / 255.0
+            face = np.expand_dims(face, axis=0)
 
-            if time.time() - last_capture >= capture_interval:
-                face_images.append(cv2.imencode('.png', roi)[1].tobytes())
-                face_images = face_images[-5:]
-                last_capture = time.time()
+            preds = emotion_model.predict(face, verbose=0)[0]
+            idx = np.argmax(preds)
 
-            if len(face_images) >= 3:
-                counts = {e: 0 for e in emotion_labels}
-                for img in face_images:
-                    counts[predict_emotion(img)] += 1
-                max_emotion = max(counts, key=counts.get)
+            current_emotion = emotion_labels[idx]
+            current_confidence = float(preds[idx])
 
-            display_emotion = "Neutral" if max_emotion == "Surprise" else max_emotion
-            cv2.putText(frame, display_emotion, (100, 150),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 255), 2)
+            cv2.putText(
+                frame,
+                f"{current_emotion} ({current_confidence:.2f})",
+                (x, y - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.9,
+                (255, 0, 255),
+                2
+            )
 
-        ret, buffer = cv2.imencode('.png', frame)
-        yield (b'--frame\r\n'
-               b'Content-Type: image/png\r\n\r\n' + buffer.tobytes() + b'\r\n')
+        ret, buffer = cv2.imencode(".jpg", frame)
+        frame = buffer.tobytes()
 
-# ------------------ CHATBOT ------------------
-def build_prompt(message, mood):
-    mood_map = {
-        "Happy": "The user is happy. Respond positively and warmly.",
-        "Sad": "The user is sad. Be empathetic and comforting.",
-        "Angry": "The user is angry. Stay calm and grounding.",
-        "Fear": "The user is anxious. Reassure gently.",
-        "Neutral": "Be friendly and supportive."
+        yield (
+            b"--frame\r\n"
+            b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n"
+        )
+
+# ---------------- RECOMMENDERS ----------------
+def recommend_songs(emotion):
+    """
+    Emotion → cluster → song mood mapping
+    """
+    emotion_map = {
+        "Happy": 0,
+        "Neutral": 1,
+        "Sad": 2,
+        "Angry": 3,
+        "Fear": 4,
+        "Disgust": 5
     }
 
-    mood_context = mood_map.get(mood, "Be friendly and supportive.")
+    # Fallback safety
+    if emotion not in emotion_map:
+        return ["Play something calming 🌿"]
 
-    return f"""
-You are a caring AI therapist.
-{mood_context}
+    # Fake feature vector from emotion (simple but valid)
+    emotion_vector = np.zeros((1, len(emotion_map)))
+    emotion_vector[0, emotion_map[emotion]] = 1
 
-User says: "{message}"
+    scaled = spotify_scaler.transform(emotion_vector)
+    cluster = spotify_kmeans.predict(scaled)[0]
 
-Reply in 60–80 words.
-Ask one gentle follow-up question.
+    # Human-friendly recommendations per cluster
+    cluster_songs = {
+        0: ["Happy – Pharrell Williams", "Good Life – OneRepublic"],
+        1: ["Let It Be – The Beatles", "Fix You – Coldplay"],
+        2: ["Someone Like You – Adele", "Say Something – A Great Big World"],
+        3: ["Believer – Imagine Dragons", "Stronger – Kanye West"],
+        4: ["Lovely – Billie Eilish", "Breathe Me – Sia"],
+        5: ["Weightless – Marconi Union", "River – Leon Bridges"]
+    }
+
+    return cluster_songs.get(cluster, ["Lo-fi Chill Beats 🎧"])
+
+THERAPY_MAP = {
+    "Happy": [
+        "Practice gratitude journaling",
+        "Engage in creative activities",
+        "Share positive moments with others"
+    ],
+    "Neutral": [
+        "Mindful breathing for 2 minutes",
+        "Light physical activity",
+        "Body scan relaxation"
+    ],
+    "Sad": [
+        "Guided breathing exercise",
+        "Journaling your thoughts",
+        "Reach out to a trusted person"
+    ],
+    "Angry": [
+        "Progressive muscle relaxation",
+        "Box breathing technique",
+        "Physical activity to release tension"
+    ],
+    "Fear": [
+        "Grounding using the 5-4-3-2-1 method",
+        "Slow diaphragmatic breathing",
+        "Positive affirmations"
+    ],
+    "Disgust": [
+        "Mindfulness meditation",
+        "Cognitive reframing exercise",
+        "Relaxation imagery"
+    ]
+}
+
+import random
+
+def recommend_therapy(emotion):
+    if emotion not in THERAPY_MAP:
+        emotion = "Neutral"
+
+    return random.choice(THERAPY_MAP[emotion])
+
+# ---------------- CHATBOT ----------------
+
+def therapist_reply(user_text, emotion):
+    prompt = f"""
+You are a calm, supportive mental health assistant.
+
+User emotion (detected): {emotion}
+User message: {user_text}
+
+Respond empathetically.
+Suggest a short coping technique if appropriate.
+Do NOT repeat the user's message.
 """
-
-def bot_answer(message, mood):
-    if not mood:
-        mood = "Neutral"
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=[{"role": "user", "content": build_prompt(message, mood)}],
-        temperature=0.6
+        messages=[
+            {"role": "system", "content": "You are a compassionate AI therapist."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.7,
+        max_tokens=200
     )
+
     return response.choices[0].message.content.strip()
 
-# ------------------ ROUTES ------------------
-@app.route('/')
-def home():
-    return render_template('together.html')
+# ---------------- ROUTES ----------------
+@app.route("/")
+def index():
+    return render_template("together.html")
 
-@app.route('/video')
+@app.route("/video")
 def video():
-    return Response(detection(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(gen_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
-@app.route('/chat', methods=['POST'])
+@app.route("/chat", methods=["POST"])
 def chat():
-    user_msg = request.json.get('message', '')
-    reply = bot_answer(user_msg, max_emotion)
-    return jsonify({'bot_message': reply})
+    data = request.json
+    user_message = data["message"]
 
-# ------------------ MAIN ------------------
-if __name__ == '__main__':
+    reply = therapist_reply(user_message, current_emotion)
+    songs = recommend_songs(current_emotion)
+    therapy = recommend_therapy(user_message)
+
+    return jsonify({
+        "reply": reply,
+        "emotion": current_emotion,
+        "confidence": round(current_confidence * 100, 1),
+        "songs": songs,
+        "therapy": therapy
+    })
+
+if __name__ == "__main__":
     app.run(debug=True)

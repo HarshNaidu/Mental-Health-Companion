@@ -1,6 +1,8 @@
 flask
 opencv-python
-numpy
+numpy<2
 tensorflow==2.15.0
-keras
+joblib
+scikit-learn
+pandas
 openai

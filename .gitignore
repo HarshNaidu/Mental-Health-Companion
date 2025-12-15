@@ -1,1 +1,3 @@
 venv/Lib/site-packages/tensorflow/python/_pywrap_tensorflow_internal.pyd
+models/Therapy/Suicide_Detection.csv
+models/Therapy/therapy_texts.pkl
