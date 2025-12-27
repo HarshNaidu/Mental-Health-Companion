@@ -7,8 +7,7 @@ Built as an end-to-end AI application with a focus on practical, real-world impa
 🎥 Demo & Screenshots
 🖥️ Application Interface
 
-
-<img width="1918" height="907" alt="Screenshot 2025-12-27 221358" src="https://github.com/user-attachments/assets/635a0001-8129-4279-a9bd-d704298e7344" />
+<img width="1918" height="907" alt="Screenshot 2025-12-27 221358" src="https://github.com/user-attachments/assets/5438bf40-99b3-4017-b6f4-2e94a971868d" />
 <img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/0e717383-81b1-4bb2-bc52-66377b9a4893" />
 
 
