@@ -42,7 +42,7 @@ Built as an end-to-end AI application with a focus on practical, real-world impa
 
 <li>HTML / CSS / JavaScript</li>
 </ul>
-## ▶️ How to Run Locally
+▶️ How to Run Locally
 
 ```bash
 python -m venv venv
