@@ -13,81 +13,70 @@ Built as an end-to-end AI application with a focus on practical, real-world impa
 
 
 🚀 Key Features
+<ul>
+<li>🎭 Real-time facial emotion detection using CNNs</li>
 
-🎭 Real-time facial emotion detection using CNNs
+<li>💬 Emotion-adaptive AI chatbot</li>
 
-💬 Emotion-adaptive AI chatbot
+<li>🧠 Therapy recommendations using NLP similarity models</li>
 
-🧠 Therapy recommendations using NLP similarity models
+<li>🎵 Mood-based music recommendations using K-Means clustering</li>
 
-🎵 Mood-based music recommendations using K-Means clustering
+<li>🎙️ Optional speech-to-text input</li>
 
-🎙️ Optional speech-to-text input
-
-🌐 Interactive web interface built with Flask
-
+<li>🌐 Interactive web interface built with Flask</li>
+</ul>
 🧰 Tech Stack
+<ul>
+<li>Python</li>
 
-Python
+<li>TensorFlow / Keras</li>
 
-TensorFlow / Keras
+<li>OpenCV</li>
 
-OpenCV
+<li>NLP (TF-IDF, Cosine Similarity)</li>
 
-NLP (TF-IDF, Cosine Similarity)
+<li>scikit-learn</li>
 
-scikit-learn
+<li>Flask</li>
 
-Flask
+<li>HTML / CSS / JavaScript</li>
+</ul>
+## ▶️ How to Run Locally
 
-HTML / CSS / JavaScript
-
-🗂️ Project Structure
-models/
- ├─ Emotion/      # CNN-based emotion recognition model
- ├─ Therapy/      # NLP similarity-based therapy recommender
- └─ Spotify/      # K-Means based music recommender
-static/
-templates/
-together.py
-requirements.txt
-
-▶️ How to Run Locally
+```bash
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 python together.py
-
+```
 
 Open in browser:
 👉 http://127.0.0.1:5000
 
 🎯 What This Project Demonstrates
+<ul>
+<li>Real-time computer vision deployment</li>
 
-Real-time computer vision deployment
+<li>Practical machine learning pipelines</li>
 
-Practical machine learning pipelines
+<li>Cross-model integration (CV + NLP + clustering)</li>
 
-Cross-model integration (CV + NLP + clustering)
+<li>End-to-end AI system design</li>
 
-End-to-end AI system design
-
-User-focused AI for mental wellness
-
+<li>User-focused AI for mental wellness</li>
+</ul>
 📌 Future Enhancements
+<ul>
+<li>Cloud deployment</li>
+<li>Voice-based responses</li>
+<li>Improved emotion robustness</li>
+<li>Mobile-friendly UI</li>
+</ul>
 
-Cloud deployment
-
-Voice-based responses
-
-Improved emotion robustness
-
-Mobile-friendly UI
-
-👤 Author
-
+👤 Author :
 Harsh Naidu
-📧 [naiduharsh45@gmail.com](mailto:naiduharsh45@gmail.com?subject=GitHub%20Inquiry)
-🔗 [LinkedIn](https://www.linkedin.com/in/harsh-naidu-/)
+</br>📧 [naiduharsh45@gmail.com](https://mail.google.com/mail/?view=cm&fs=1&to=naiduharsh45@gmail.com)
+</br>🔗 [LinkedIn](https://www.linkedin.com/in/harsh-naidu-/)
 
 ⭐ If you find this project interesting, consider starring the repository.
