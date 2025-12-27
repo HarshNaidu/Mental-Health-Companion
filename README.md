@@ -7,8 +7,10 @@ Built as an end-to-end AI application with a focus on practical, real-world impa
 🎥 Demo & Screenshots
 🖥️ Application Interface
 
+
 <img width="1918" height="907" alt="Screenshot 2025-12-27 221358" src="https://github.com/user-attachments/assets/635a0001-8129-4279-a9bd-d704298e7344" />
 <img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/0e717383-81b1-4bb2-bc52-66377b9a4893" />
+
 
 🚀 Key Features
 
@@ -85,6 +87,7 @@ Mobile-friendly UI
 👤 Author
 
 Harsh Naidu
-📧 [naiduharsh45@gmail.com](mailto:naiduharsh45@gmail.com) | 🔗 [LinkedIn](https://www.linkedin.com/in/harsh-naidu-/)
+📧 [naiduharsh45@gmail.com](mailto:naiduharsh45@gmail.com?subject=GitHub%20Inquiry)
+🔗 [LinkedIn](https://www.linkedin.com/in/harsh-naidu-/)
 
 ⭐ If you find this project interesting, consider starring the repository.
