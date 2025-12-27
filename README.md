@@ -7,18 +7,8 @@ Built as an end-to-end AI application with a focus on practical, real-world impa
 🎥 Demo & Screenshots
 🖥️ Application Interface
 
-(Add screenshots here)
-
-📸 Screenshot 1: Main dashboard with live camera feed
-📸 Screenshot 2: Emotion detection overlay (Happy / Neutral / Sad)
-📸 Screenshot 3: Chatbot conversation UI
-📸 Screenshot 4: Music & therapy recommendation panels
-
-
-Replace this section with actual images like:
-
-![Dashboard](screenshots/dashboard.png)
-![Chatbot](screenshots/chatbot.png)
+<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/0e717383-81b1-4bb2-bc52-66377b9a4893" />
+<img width="1918" height="907" alt="Screenshot 2025-12-27 221358" src="https://github.com/user-attachments/assets/635a0001-8129-4279-a9bd-d704298e7344" />
 
 🚀 Key Features
 
@@ -95,8 +85,8 @@ Mobile-friendly UI
 👤 Author
 
 Harsh Naidu
-📧 naiduharsh45@gmail.com
+<a = "https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcRzBxwLftCtzKCGhTvnjkPBmMZBCgGpklxTDqzfqwWmZMjlDfldlkfHRSlNkBxsxwRHwbsfm">📧 naiduharsh45@gmail.com</a>
 
-🔗 LinkedIn
+<a = "https://www.linkedin.com/in/harsh-naidu-/">🔗 LinkedIn</a>
 
 ⭐ If you find this project interesting, consider starring the repository.
